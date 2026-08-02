@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Olist Analytics Dashboard — Siddhant Singh Chauhan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset & tokens ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:       #0f1b2d;
+      --navy-mid:   #162236;
+      --navy-light: #1e3050;
+      --teal:       #2dd4bf;
+      --teal-dim:   #14b8a6;
+      --off-white:  #f4f6f8;
+      --text:       #e2e8f0;
+      --text-muted: #94a3b8;
+      --border:     rgba(255,255,255,0.08);
+      --card-bg:    rgba(255,255,255,0.04);
+      --shadow:     0 4px 24px rgba(0,0,0,0.35);
+      --radius:     12px;
+      --font:       'Inter', system-ui, sans-serif;
+      --mono:       'JetBrains Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      background: var(--navy);
+      color: var(--text);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--teal); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Layout helpers ───────────────────────────────────────────── */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    section {
+      padding: 80px 0;
+    }
+
+    section + section {
+      border-top: 1px solid var(--border);
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      font-size: clamp(1.4rem, 3vw, 1.85rem);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 20px;
+      line-height: 1.3;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    p { color: var(--text); margin-bottom: 16px; }
+    p:last-child { margin-bottom: 0; }
+
+    /* ── Nav ──────────────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15, 27, 45, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: var(--teal);
+      letter-spacing: 0.04em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: #fff; text-decoration: none; }
+
+    /* ── Hero ─────────────────────────────────────────────────────── */
+    #hero {
+      padding: 96px 0 80px;
+      border-top: none;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 20px;
+    }
+
+    .hero-title {
+      font-size: clamp(1.9rem, 5vw, 2.8rem);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+
+    .hero-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin-bottom: 32px;
+      line-height: 1.65;
+    }
+
+    /* chips */
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 40px;
+    }
+
+    .chip {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--teal-dim);
+      color: var(--teal);
+      background: rgba(45, 212, 191, 0.07);
+      letter-spacing: 0.03em;
+    }
+
+    /* CTA button */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      text-decoration: none;
+    }
+
+    .btn:hover { transform: translateY(-2px); text-decoration: none; }
+
+    .btn-primary {
+      background: var(--teal);
+      color: var(--navy);
+      box-shadow: 0 0 0 0 rgba(45,212,191,0.4);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 0 20px rgba(45,212,191,0.35);
+    }
+
+    .btn-ghost {
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      background: transparent;
+    }
+
+    .btn-ghost:hover { color: #fff; border-color: rgba(255,255,255,0.2); }
+
+    /* ── Problem section ──────────────────────────────────────────── */
+    .problem-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .problem-list li {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 16px 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .problem-num {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--teal);
+      padding-top: 3px;
+      min-width: 20px;
+    }
+
+    .problem-text { font-size: 0.93rem; color: var(--text); line-height: 1.55; }
+    .problem-text strong { color: #fff; font-weight: 600; }
+
+    /* ── Accordion ────────────────────────────────────────────────── */
+    .accordion {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 24px;
+    }
+
+    .accordion-item {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .accordion-trigger {
+      width: 100%;
+      background: var(--card-bg);
+      border: none;
+      cursor: pointer;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-align: left;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.9rem;
+      transition: background 0.15s;
+    }
+
+    .accordion-trigger:hover { background: rgba(255,255,255,0.06); }
+
+    .acc-index {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--teal);
+      min-width: 22px;
+    }
+
+    .acc-title { flex: 1; font-weight: 500; color: #fff; }
+
+    .acc-issue-short {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      flex: 2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 300px;
+    }
+
+    .acc-chevron {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      transition: transform 0.2s;
+      margin-left: auto;
+    }
+
+    .accordion-item.open .acc-chevron { transform: rotate(180deg); }
+
+    .accordion-body {
+      display: none;
+      padding: 0 20px 18px 56px;
+      background: rgba(0,0,0,0.15);
+    }
+
+    .accordion-item.open .accordion-body { display: block; }
+
+    .acc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      padding-top: 16px;
+    }
+
+    .acc-field-label {
+      font-family: var(--mono);
+      font-size: 0.67rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 4px;
+    }
+
+    .acc-field-value {
+      font-size: 0.88rem;
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    @media (max-width: 560px) {
+      .acc-grid { grid-template-columns: 1fr; }
+      .acc-issue-short { display: none; }
+    }
+
+    /* ── Data Model ───────────────────────────────────────────────── */
+    .model-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .model-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+    }
+
+    .model-card h3 {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 12px;
+    }
+
+    .model-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .model-card li {
+      font-size: 0.88rem;
+      color: var(--text);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .model-card li::before {
+      content: '→';
+      color: var(--teal);
+      font-size: 0.75rem;
+      padding-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .model-card li span { color: var(--text-muted); font-size: 0.82rem; }
+
+    .model-note {
+      margin-top: 20px;
+      padding: 16px 20px;
+      background: rgba(45,212,191,0.06);
+      border: 1px solid rgba(45,212,191,0.2);
+      border-radius: var(--radius);
+      font-size: 0.88rem;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .model-note strong { color: var(--teal); }
+
+    @media (max-width: 580px) {
+      .model-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── Insights ─────────────────────────────────────────────────── */
+    .insights-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .insight-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .insight-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: var(--teal);
+    }
+
+    .insight-card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .insight-card p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 580px) {
+      .insights-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── Embed ────────────────────────────────────────────────────── */
+    #dashboard {
+      padding: 80px 0;
+    }
+
+    .embed-intro {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .page-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .page-tab {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    /* responsive iframe wrapper */
+    .embed-wrapper {
+      position: relative;
+      width: 100%;
+      padding-top: 62.5%; /* 16:10 aspect ratio */
+      background: var(--navy-mid);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .embed-wrapper iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: var(--radius);
+    }
+
+    /* skeleton loader */
+    .embed-skeleton {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: var(--navy-mid);
+      border-radius: var(--radius);
+      pointer-events: none;
+      transition: opacity 0.4s;
+    }
+
+    .skeleton-spinner {
+      width: 32px; height: 32px;
+      border: 2px solid var(--border);
+      border-top-color: var(--teal);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .skeleton-text {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-family: var(--mono);
+    }
+
+    .embed-skeleton.hidden { opacity: 0; pointer-events: none; }
+
+    /* mobile fallback */
+    .embed-mobile-note {
+      display: none;
+      margin-top: 16px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .embed-mobile-note a { color: var(--teal); }
+
+    @media (max-width: 600px) {
+      .embed-wrapper { display: none; }
+      .embed-mobile-note { display: block; }
+    }
+
+    /* ── Footer ───────────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 0;
+    }
+
+    .footer-inner {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .footer-name {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .footer-name strong { color: var(--text); font-weight: 500; }
+
+    .footer-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .footer-links a {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--teal); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<!-- ── Nav ──────────────────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-inner">
+    <a href="https://beepsid.github.io/aboutme/" class="nav-logo" style="text-decoration:none;">siddhant.dev</a>
+    <ul class="nav-links">
+      <li><a href="https://beepsid.github.io/aboutme/" target="_blank" rel="noopener">Portfolio</a></li>
+      <li><a href="#cleaning">Cleaning</a></li>
+      <li><a href="#model">Model</a></li>
+      <li><a href="#dashboard">Dashboard</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ── Hero ─────────────────────────────────────────────────────────── -->
+<section id="hero">
+  <div class="container">
+    <p class="hero-eyebrow">Data Analytics · Case Study</p>
+    <h1 class="hero-title">Olist Brazilian E-Commerce<br/>Analytics Dashboard</h1>
+    <p class="hero-subtitle">
+      Cleaning, modeling, and visualizing 100,000+ real orders
+      from raw, genuinely messy CSVs to a 5-page interactive Power BI dashboard.
+    </p>
+    <div class="chip-row">
+      <span class="chip">Power BI</span>
+      <span class="chip">Power Query (M)</span>
+      <span class="chip">DAX</span>
+      <span class="chip">Star Schema</span>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;">
+      <a href="#dashboard" class="btn btn-primary">
+        ↓&nbsp; Explore the Dashboard
+      </a>
+      <a href="https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce" target="_blank" rel="noopener" class="btn btn-ghost">
+        ↗&nbsp; View Dataset on Kaggle
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Problem ───────────────────────────────────────────────────────── -->
+<section id="problem">
+  <div class="container">
+    <p class="section-label">Starting point</p>
+    <h2>This dataset was not plug and play</h2>
+    <p>
+      The Olist dataset is one of the most popular public e-commerce datasets on Kaggle
+      and most tutorials treat it like it's clean out of the box. It isn't.
+      Before a single chart could be built, the data needed a real audit.
+      Here's a sample of what turned up:
+    </p>
+
+    <ul class="problem-list">
+      <li>
+        <span class="problem-num">01</span>
+        <span class="problem-text">
+          <strong>Broken category-translation join</strong> — 2 Portuguese category names had no English match in the translation table, silently producing null categories for real products.
+        </span>
+      </li>
+      <li>
+        <span class="problem-num">02</span>
+        <span class="problem-text">
+          <strong>261,831 duplicate rows</strong> in the geolocation table (out of 1M+ rows) — left unchecked, these inflate map visuals and slow down the model.
+        </span>
+      </li>
+      <li>
+        <span class="problem-num">03</span>
+        <span class="problem-text">
+          <strong>Zip codes silently truncated</strong> — leading zeros were being dropped when the column was read as a number, causing every zip starting with <code style="font-family:var(--mono);font-size:0.85em;color:var(--teal)">0</code> to silently fail on any geo join.
+        </span>
+      </li>
+      <li>
+        <span class="problem-num">04</span>
+        <span class="problem-text">
+          <strong>551 orders with conflicting reviews</strong> — duplicate review entries for the same order, making average-score calculations unreliable without deduplication.
+        </span>
+      </li>
+      <li>
+        <span class="problem-num">05</span>
+        <span class="problem-text">
+          <strong>No direct relationship between customers/sellers and geography</strong> — required building role-playing dimension tables to handle Power BI's single-active-relationship constraint.
+        </span>
+      </li>
+    </ul>
+
+    <p style="margin-top: 24px; color: var(--text-muted); font-size: 0.9rem;">
+      The full audit; 14 issues, every decision, every reason, is documented below.
+    </p>
+  </div>
+</section>
+
+<!-- ── Cleaning Deep-Dive ─────────────────────────────────────────── -->
+<section id="cleaning">
+  <div class="container">
+    <p class="section-label">Data Cleaning & Modeling</p>
+    <h2>Every issue. Every decision. Every reason.</h2>
+    <p>
+      The goal was to clean without fabricating data(no revenue rows dropped),
+      no values invented without a defensible strategy. Click any row to see the full decision.
+    </p>
+
+    <div class="accordion" id="cleaning-accordion">
+
+      <div class="accordion-item">
+        <button class="accordion-trigger" aria-expanded="false">
+          <span class="acc-index">01</span>
+          <span class="acc-title">Missing category names (610 products)</span>
+          <span class="acc-issue-short">Bucketed as "Uncategorized"</span>
+          <span class="acc-chevron">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="acc-grid">
+            <div>
+              <p class="acc-field-label">Issue Found</p>
+              <p class="acc-field-value">610 products had no category name in the translation table.</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Decision Made</p>
+              <p class="acc-field-value">Bucketed as "Uncategorized" rather than dropped.</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Why</p>
+              <p class="acc-field-value">These rows still had real revenue data. Dropping them would understate total sales figures.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-trigger" aria-expanded="false">
+          <span class="acc-index">02</span>
+          <span class="acc-title">Products missing all physical dimensions (2 rows)</span>
+          <span class="acc-issue-short">Dropped — statistically immaterial</span>
+          <span class="acc-chevron">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="acc-grid">
+            <div>
+              <p class="acc-field-label">Issue Found</p>
+              <p class="acc-field-value">2 products were missing all physical dimension attributes (weight, length, height, width).</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Decision Made</p>
+              <p class="acc-field-value">Dropped both rows.</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Why</p>
+              <p class="acc-field-value">2 out of 33,000+ products — statistically immaterial. No category context to impute from reliably.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-trigger" aria-expanded="false">
+          <span class="acc-index">03</span>
+          <span class="acc-title">Products with weight = 0 (4 rows)</span>
+          <span class="acc-issue-short">Imputed using category-level median</span>
+          <span class="acc-chevron">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="acc-grid">
+            <div>
+              <p class="acc-field-label">Issue Found</p>
+              <p class="acc-field-value">4 products had <code style="font-family:var(--mono);font-size:0.85em;color:var(--teal)">weight_g = 0</code>, which is physically impossible and would corrupt freight calculations.</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Decision Made</p>
+              <p class="acc-field-value">Imputed using the median weight of all other products in the same category.</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Why</p>
+              <p class="acc-field-value">Category-specific imputation avoids nonsensical cross-category fallbacks. A phone case and a couch should not share a median.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-trigger" aria-expanded="false">
+          <span class="acc-index">04</span>
+          <span class="acc-title">Orders missing approval/delivery timestamps</span>
+          <span class="acc-issue-short">Left as null — not filled</span>
+          <span class="acc-chevron">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="acc-grid">
+            <div>
+              <p class="acc-field-label">Issue Found</p>
+              <p class="acc-field-value">A subset of orders had null approval and/or delivery date columns.</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Decision Made</p>
+              <p class="acc-field-value">Left as null. No imputation applied.</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Why</p>
+              <p class="acc-field-value">These are predominantly canceled or undelivered orders. They legitimately never got an approval or delivery timestamp — filling them would fabricate data.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-trigger" aria-expanded="false">
+          <span class="acc-index">05</span>
+          <span class="acc-title">775 orders with no matching order items</span>
+          <span class="acc-issue-short">Kept in orders table, excluded from revenue</span>
+          <span class="acc-chevron">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="acc-grid">
+            <div>
+              <p class="acc-field-label">Issue Found</p>
+              <p class="acc-field-value">775 order IDs existed in the orders table but had no corresponding rows in the order items table.</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Decision Made</p>
+              <p class="acc-field-value">Kept in the orders fact table, but explicitly excluded from revenue measures.</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Why</p>
+              <p class="acc-field-value">Preserves accurate cancellation-rate reporting. Dropping them entirely would understate how often orders fail to result in a sale.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-trigger" aria-expanded="false">
+          <span class="acc-index">06</span>
+          <span class="acc-title">551 orders with duplicate/conflicting reviews</span>
+          <span class="acc-issue-short">Deduped — kept latest review per order</span>
+          <span class="acc-chevron">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="acc-grid">
+            <div>
+              <p class="acc-field-label">Issue Found</p>
+              <p class="acc-field-value">814 duplicate review IDs — 551 orders had 2 or more review entries, making average-score calculations unreliable.</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Decision Made</p>
+              <p class="acc-field-value">Deduplicated by sorting on review creation date, then removing duplicates. Kept the latest review per order.</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Why</p>
+              <p class="acc-field-value">The latest review reflects the customer's final, settled sentiment — more meaningful than an earlier reaction.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-trigger" aria-expanded="false">
+          <span class="acc-index">07</span>
+          <span class="acc-title">9 payments with value ≤ 0</span>
+          <span class="acc-issue-short">Kept, flagged as likely voucher-only orders</span>
+          <span class="acc-chevron">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="acc-grid">
+            <div>
+              <p class="acc-field-label">Issue Found</p>
+              <p class="acc-field-value">9 payment rows had a value of zero or negative.</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Decision Made</p>
+              <p class="acc-field-value">Kept in the table but flagged.</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Why</p>
+              <p class="acc-field-value">Cross-referencing <code style="font-family:var(--mono);font-size:0.85em;color:var(--teal)">payment_type</code> suggested these are likely voucher-only orders where the discount covered the full price. Dropping them removes valid order events.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-trigger" aria-expanded="false">
+          <span class="acc-index">08</span>
+          <span class="acc-title">2 credit card payments with 0 installments</span>
+          <span class="acc-issue-short">Left as-is — imputing 1 installment not assumed</span>
+          <span class="acc-chevron">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="acc-grid">
+            <div>
+              <p class="acc-field-label">Issue Found</p>
+              <p class="acc-field-value">2 credit card payments showed 0 installments, which is logically inconsistent.</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Decision Made</p>
+              <p class="acc-field-value">Left as-is rather than imputing a value.</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Why</p>
+              <p class="acc-field-value">Imputing "1 installment" is an assumption. With only 2 rows, the risk of fabricating incorrect installment data outweighs the benefit of a clean count.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-trigger" aria-expanded="false">
+          <span class="acc-index">09</span>
+          <span class="acc-title">3 payments with type = "not_defined"</span>
+          <span class="acc-issue-short">Recoded to "Other"</span>
+          <span class="acc-chevron">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="acc-grid">
+            <div>
+              <p class="acc-field-label">Issue Found</p>
+              <p class="acc-field-value">3 payment rows had a <code style="font-family:var(--mono);font-size:0.85em;color:var(--teal)">payment_type</code> value of "not_defined".</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Decision Made</p>
+              <p class="acc-field-value">Recoded to "Other".</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Why</p>
+              <p class="acc-field-value">Enables clean categorical grouping in visuals without creating a confusing "not_defined" slice in charts.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-trigger" aria-expanded="false">
+          <span class="acc-index">10</span>
+          <span class="acc-title">Zip codes truncated across 3 tables</span>
+          <span class="acc-issue-short">Re-cast as text, zero-padded to 5 digits</span>
+          <span class="acc-chevron">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="acc-grid">
+            <div>
+              <p class="acc-field-label">Issue Found</p>
+              <p class="acc-field-value">Zip codes in the customers, sellers, and geolocation tables were being read as integers, silently dropping the leading zero from any zip starting with 0.</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Decision Made</p>
+              <p class="acc-field-value">Re-cast all zip code columns as text, then zero-padded to 5 digits using Power Query's <code style="font-family:var(--mono);font-size:0.85em;color:var(--teal)">Text.PadStart</code>.</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Why</p>
+              <p class="acc-field-value">Without this fix, any zip beginning with 0 silently fails on geo joins — producing nulls in customer/seller location lookups without any error message.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-trigger" aria-expanded="false">
+          <span class="acc-index">11</span>
+          <span class="acc-title">Inconsistent category naming & 2 missing translations</span>
+          <span class="acc-issue-short">Standardized + manually mapped missing entries</span>
+          <span class="acc-chevron">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="acc-grid">
+            <div>
+              <p class="acc-field-label">Issue Found</p>
+              <p class="acc-field-value">Product category names had inconsistent casing and formatting. 2 Portuguese categories had no English equivalent in the translation table.</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Decision Made</p>
+              <p class="acc-field-value">Standardized all names via Power Query. Manually added the 2 missing mappings to the translation table.</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Why</p>
+              <p class="acc-field-value">Ensures every product resolves to a real, readable English category — no "null" slices in category-level charts.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-trigger" aria-expanded="false">
+          <span class="acc-index">12</span>
+          <span class="acc-title">261,831 duplicate geolocation rows</span>
+          <span class="acc-issue-short">Deduped, grouped by zip prefix using centroid</span>
+          <span class="acc-chevron">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="acc-grid">
+            <div>
+              <p class="acc-field-label">Issue Found</p>
+              <p class="acc-field-value">The geolocation table had 1M+ rows with 261,831 exact duplicates — one zip code could have hundreds of nearly-identical coordinate entries.</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Decision Made</p>
+              <p class="acc-field-value">Deduplicated, then grouped by zip code prefix and computed centroid (mean lat/lng per zip). Reduces table to ~19K clean rows.</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Why</p>
+              <p class="acc-field-value">A centroid is a defensible approximation at city/state map zoom level. The alternative (keeping 1M rows with duplicates) inflates the model and corrupts any coordinate averaging done in DAX.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-trigger" aria-expanded="false">
+          <span class="acc-index">13</span>
+          <span class="acc-title">31 geolocation rows outside Brazil's bounding box</span>
+          <span class="acc-issue-short">Filtered out before centroid aggregation</span>
+          <span class="acc-chevron">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="acc-grid">
+            <div>
+              <p class="acc-field-label">Issue Found</p>
+              <p class="acc-field-value">31 lat/lng coordinates fell outside Brazil's geographic bounding box — likely data entry errors.</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Decision Made</p>
+              <p class="acc-field-value">Filtered out before the centroid aggregation step, not after.</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Why</p>
+              <p class="acc-field-value">If these outlier points were included in the mean, they would skew the centroid for their zip code — placing a valid zip's map pin in the wrong location.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-trigger" aria-expanded="false">
+          <span class="acc-index">14</span>
+          <span class="acc-title">Geolocation had no relationship to customers or sellers</span>
+          <span class="acc-issue-short">Built as role-playing dimensions</span>
+          <span class="acc-chevron">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="acc-grid">
+            <div>
+              <p class="acc-field-label">Issue Found</p>
+              <p class="acc-field-value">The geo table needed to serve both customer location and seller location, but Power BI only allows one active relationship from a single dimension table.</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Decision Made</p>
+              <p class="acc-field-value">Duplicated the cleaned geo table into <code style="font-family:var(--mono);font-size:0.85em;color:var(--teal)">customer_geo</code> and <code style="font-family:var(--mono);font-size:0.85em;color:var(--teal)">seller_geo</code> via Power Query References (not copies). Each has its own active relationship.</p>
+            </div>
+            <div>
+              <p class="acc-field-label">Why</p>
+              <p class="acc-field-value">Power Query References mean the geo cleaning logic only exists once — both tables stay in sync. Avoids Power BI's single-active-relationship-path limitation without workarounds like USERELATIONSHIP everywhere.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /accordion -->
+
+    <!-- Technical supporting notes -->
+    <div class="model-note" style="margin-top: 28px;">
+      <strong>Supporting technical details</strong><br/>
+      Built a custom Calendar table in DAX using <code style="font-family:var(--mono);font-size:0.85em;">MIN() and MAX() of dates from order table</code> with Year, Quarter, Month, MonthName, YearMonth, and a numeric <code style="font-family:var(--mono);font-size:0.85em;">YearMonthSort</code> column — because text-based YearMonth sorts alphabetically by default, which breaks time-series charts.<br/><br/>
+      Added multiple inactive relationships from the Calendar table to secondary date columns (delivered date, review date) for future <code style="font-family:var(--mono);font-size:0.85em;">USERELATIONSHIP()</code> time-intelligence measures.<br/><br/>
+      Diagnosed and fixed a cross-filter direction bug: a Single-direction relationship between orders and reviews was causing the "Avg Delivery Delay by Review Score" chart to show the same overall average in every bar. Fixed by setting the relationship to Both.
+    </div>
+  </div>
+</section>
+
+<!-- ── Data Model ─────────────────────────────────────────────────── -->
+<section id="model">
+  <div class="container">
+    <p class="section-label">Data Model</p>
+    <h2>Star schema — clean, unambiguous, fast</h2>
+    <p>
+      Two fact tables connected to six dimension tables, with role-playing geo dimensions
+      solving Power BI's single-active-relationship constraint.
+    </p>
+
+    <div class="model-grid">
+      <div class="model-card">
+        <h3>Fact Tables</h3>
+        <ul>
+          <li><code style="font-family:var(--mono);font-size:0.85em;color:var(--teal)">fact_orders</code> <span>— order-level metrics &amp; timestamps</span></li>
+          <li><code style="font-family:var(--mono);font-size:0.85em;color:var(--teal)">fact_order_items</code> <span>— line-item revenue &amp; freight</span></li>
+        </ul>
+      </div>
+
+      <div class="model-card">
+        <h3>Dimension Tables</h3>
+        <ul>
+          <li><code style="font-family:var(--mono);font-size:0.85em;color:var(--teal)">dim_products</code> <span>— attributes &amp; English categories</span></li>
+          <li><code style="font-family:var(--mono);font-size:0.85em;color:var(--teal)">dim_customers</code> <span>— customer location</span></li>
+          <li><code style="font-family:var(--mono);font-size:0.85em;color:var(--teal)">dim_sellers</code> <span>— seller location</span></li>
+          <li><code style="font-family:var(--mono);font-size:0.85em;color:var(--teal)">dim_customer_geo</code> <span>— role-playing geo</span></li>
+          <li><code style="font-family:var(--mono);font-size:0.85em;color:var(--teal)">dim_seller_geo</code> <span>— role-playing geo</span></li>
+          <li><code style="font-family:var(--mono);font-size:0.85em;color:var(--teal)">dim_calendar</code> <span>— custom DAX date table</span></li>
+        </ul>
+      </div>
+    </div>
+
+
+    <div style="margin-top: 16px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow);">
+      <img
+        src="images/dashboard.png"
+        alt="Power BI star-schema model view"
+        style="width: 100%; display: block;"
+        loading="lazy"
+      />
+    </div>
+  </div>
+</section>
+
+<!-- ── Insights ───────────────────────────────────────────────────── -->
+<section id="insights">
+  <div class="container">
+    <p class="section-label">Key Findings</p>
+    <h2>What the data actually says</h2>
+
+    <div class="insights-grid">
+      <div class="insight-card">
+        <h3>Delivery timing drives review sentiment</h3>
+        <p>
+          Orders arriving with little or no buffer ahead of the estimated delivery date skewed toward significantly worse review scores — even before counting outright-late deliveries.
+          On-time isn't enough; customers notice when it's barely on-time.
+        </p>
+      </div>
+
+      <div class="insight-card">
+        <h3>Supply is concentrated; demand is spread</h3>
+        <p>
+          Seller supply is heavily concentrated in São Paulo, Paraná, and Minas Gerais,
+          while customer demand is distributed much more evenly across all states —
+          a real geographic supply-vs-demand imbalance visible in the choropleth maps.
+        </p>
+      </div>
+
+      <div class="insight-card">
+        <h3>78% credit card · spike at exactly 10 installments</h3>
+        <p>
+          ~78% of all payments use credit card, with a pronounced spike at exactly 10 installments.
+          This is consistent with Brazil's common <em>"10x sem juros"</em> (interest-free in 10) retail
+          financing pattern — visible as a sharp outlier in the installment distribution chart.
+        </p>
+      </div>
+
+      <div class="insight-card">
+        <h3>Seasonal revenue spike — Nov 2017</h3>
+        <p>
+          Revenue shows clear seasonality, with a pronounced peak around November 2017 —
+          matching Brazil's Black Friday and holiday season ramp-up.
+          Month-over-month and rolling 3-month measures make the pattern unambiguous.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Dashboard ─────────────────────────────────────────────────── -->
+<section id="dashboard">
+  <div class="container">
+    <p class="section-label">Dashboard</p>
+    <h2>Dashboard walkthrough</h2>
+
+    <p class="embed-intro">
+      A walkthrough of all 5 report pages — Overview, Delivery Performance,
+      Product &amp; Category Analysis, Customer &amp; Seller Geography, and Payments &amp; Reviews.
+    </p>
+
+    <div class="page-tabs">
+      <span class="page-tab">Overview</span>
+      <span class="page-tab">Delivery Performance</span>
+      <span class="page-tab">Product &amp; Category Analysis</span>
+      <span class="page-tab">Customer &amp; Seller Geography</span>
+      <span class="page-tab">Payments &amp; Reviews</span>
+    </div>
+
+    <!-- Walkthrough video -->
+    <div style="border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow); background: var(--navy-mid);">
+      <video
+        controls
+        preload="metadata"
+        poster="images/dashboard.png"
+        style="width: 100%; display: block; border-radius: var(--radius);"
+        aria-label="Dashboard walkthrough video"
+      >
+        <source src="images/dashboard.mp4" type="video/mp4" />
+        Your browser does not support HTML5 video.
+        <a href="images/dashboard.mp4" style="color: var(--teal);">Download the walkthrough video</a>.
+      </video>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ───────────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-inner">
+    <span class="footer-name">Built by <strong>Siddhant Singh Chauhan</strong></span>
+    <ul class="footer-links">
+      <li><a href="https://beepsid.github.io/aboutme/" target="_blank" rel="noopener">Portfolio</a></li>
+      <li><a href="https://github.com/beepsid" target="_blank" rel="noopener">GitHub</a></li>
+      <li><a href="https://www.linkedin.com/in/siddzz/" target="_blank" rel="noopener">LinkedIn</a></li>
+      <li><a href="https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce" target="_blank" rel="noopener">Dataset</a></li>
+    </ul>
+  </div>
+</footer>
+
+<!-- ── JS: accordion ──────────────────────────────────────────────────── -->
+<script>
+  (function () {
+    const accordion = document.getElementById('cleaning-accordion');
+    if (!accordion) return;
+
+    accordion.addEventListener('click', function (e) {
+      const trigger = e.target.closest('.accordion-trigger');
+      if (!trigger) return;
+
+      const item = trigger.closest('.accordion-item');
+      const isOpen = item.classList.contains('open');
+
+      // Close all
+      accordion.querySelectorAll('.accordion-item.open').forEach(function (el) {
+        el.classList.remove('open');
+        el.querySelector('.accordion-trigger').setAttribute('aria-expanded', 'false');
+      });
+
+      // Toggle clicked
+      if (!isOpen) {
+        item.classList.add('open');
+        trigger.setAttribute('aria-expanded', 'true');
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>
