@@ -1,5 +1,8 @@
 # Olist E-Commerce Analytics Dashboard
 
+**▶ [Live interactive dashboard](https://beepsid.github.io/olist/dashboard.html)** · Power BI redesign notes: [`dashboard/POWERBI_REDESIGN.md`](dashboard/POWERBI_REDESIGN.md) · theme: [`dashboard/powerbi-theme.json`](dashboard/powerbi-theme.json)
+
+
 End-to-end data analytics project built on the public [Olist dataset](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) — 9 relational CSVs, ~100,000 real anonymized Brazilian e-commerce orders from 2016–2018. The emphasis is the full pipeline: data auditing → cleaning decisions → relational modeling → DAX → dashboard design.
 
 **Tech stack:** Power Query (M) · Power BI · DAX · Star Schema · Python / pandas
